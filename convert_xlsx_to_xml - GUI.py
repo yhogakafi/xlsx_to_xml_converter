@@ -6,6 +6,9 @@ from datetime import datetime
 import random
 import os
 
+# Suppress future warning about silent downcasting
+pd.set_option('future.no_silent_downcasting', True)
+
 # Function to handle button click event for selecting Excel file
 def select_excel_file():
     global excel_file_path
@@ -23,6 +26,9 @@ def generate_xml_and_report():
         # Load the Excel file
         df = pd.read_excel(excel_file_path)
 
+        # Slice the DataFrame to start from the third row (index 1)
+        df = df.iloc[1:].reset_index(drop=True)
+
         # Replace NaN values with empty strings in the DataFrame
         df = df.fillna('')
 
@@ -32,9 +38,10 @@ def generate_xml_and_report():
         # Create the root element
         root = etree.Element("NMEXML", EximID=str(random.randint(100, 999)), BranchCode="ONLINE", ACCOUNTANTCOPYID="")
 
-        # Create lists to store PONO and SONO pairs
+        # Create lists to store PONO, SONO and SHIPTO1
         ponos = []
         sonos = []
+        shipto1 = []
 
         # Create the Transactions element
         transactions = etree.SubElement(root, "TRANSACTIONS", OnError="CONTINUE")
@@ -119,6 +126,7 @@ def generate_xml_and_report():
             # Append PONO and SONO to lists
             ponos.append(last_item_row['PONO'])
             sonos.append(sono_format)
+            shipto1.append(last_item_row['SHIPTO1'])
 
             # Create SALESMANID element and add LASTNAME and FIRSTNAME inside it
             salesman_id = etree.SubElement(sales_order, "SALESMANID")
@@ -142,7 +150,7 @@ def generate_xml_and_report():
                 f.write(xml_string)
 
             # Generate report in Excel
-            report_data = pd.DataFrame({"PONO": ponos, "SONO": sonos})
+            report_data = pd.DataFrame({"PONO": ponos, "SHIPTO1" : shipto1, "SONO": sonos})
             report_filename = os.path.splitext(xml_filename)[0] + "_report.xlsx"
             report_data.to_excel(report_filename, index=False)
 
