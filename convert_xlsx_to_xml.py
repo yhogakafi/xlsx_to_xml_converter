@@ -1,6 +1,7 @@
 import pandas as pd
 from lxml import etree
 from datetime import datetime
+import random
 
 # Load the Excel file
 df = pd.read_excel('sales_orders.xlsx')
@@ -8,19 +9,26 @@ df = pd.read_excel('sales_orders.xlsx')
 # Replace NaN values with empty strings in the DataFrame
 df = df.fillna('')
 
+# Initialize a counter outside the loop
+sono_counter = 20000
+
 # Create the root element
-root = etree.Element("NMEXML", EximID="349", BranchCode="ONLINE", ACCOUNTANTCOPYID="")
+root = etree.Element("NMEXML", EximID=str(random.randint(100, 999)), BranchCode="ONLINE", ACCOUNTANTCOPYID="")
 
 # Create the Transactions element
 transactions = etree.SubElement(root, "TRANSACTIONS", OnError="CONTINUE")
 
 # Group by TRANSACTIONID to handle multiple ITEMLINE entries per SALESORDER
-grouped = df.groupby('TRANSACTIONID')
+grouped = df.groupby('PONO')
 
 for transaction_id, group in grouped:
-    sales_order = etree.SubElement(transactions, "SALESORDER", operation=str(group.iloc[0]['SALESORDER operation']), REQUESTID=str(group.iloc[0]['REQUESTID']))
-    etree.SubElement(sales_order, "TRANSACTIONID").text = str(group.iloc[0]['TRANSACTIONID'])
+    # Generate a random 6-digit number for TRANSACTIONID
+    random_transaction_id = random.randint(100000, 999999)
     
+    # Create a single SALESORDER element for each group
+    sales_order = etree.SubElement(transactions, "SALESORDER", operation="Add", REQUESTID="1")
+    etree.SubElement(sales_order, "TRANSACTIONID").text = str(random_transaction_id)
+        
     # Enumerate through item rows to create ITEMLINE elements
     for idx, item_row in enumerate(group.itertuples(), start=1):
         item_line = etree.SubElement(sales_order, "ITEMLINE", operation="Add")
@@ -42,16 +50,23 @@ for transaction_id, group in grouped:
         etree.SubElement(item_line, "ITEMOVDESC").text = str(item_row.ITEMOVDESC)
         etree.SubElement(item_line, "UNITPRICE").text = str(item_row.UNITPRICE)
         etree.SubElement(item_line, "DISCPC").text = str(item_row.DISCPC)
-        etree.SubElement(item_line, "TAXCODES").text = str(item_row.TAXCODES)
-        etree.SubElement(item_line, "PROJECTID").text = str(item_row.PROJECTID)
-        etree.SubElement(item_line, "DEPTID").text = str(item_row.DEPTID)
+        etree.SubElement(item_line, "TAXCODES").text = str('T')
+        etree.SubElement(item_line, "PROJECTID").text = str('TMO-1101')
+        etree.SubElement(item_line, "DEPTID").text = str('ONLINE-TMS')
         etree.SubElement(item_line, "QTYSHIPPED").text = str(item_row.QTYSHIPPED)
     
     # Add the details after all ITEMLINEs for this SALESORDER
     last_item_row = group.iloc[-1]  # Get the last row in the group
     
-    etree.SubElement(sales_order, "SONO").text = str(last_item_row['SONO'])
-    etree.SubElement(sales_order, "SODATE").text = datetime.strftime(last_item_row['SODATE'], "%Y-%m-%d")
+    # Adjusting SONO format with a counter
+    sono_format = f"SCO-S{datetime.now().strftime('%y%m')}-{sono_counter}"
+    etree.SubElement(sales_order, "SONO").text = sono_format
+    # Increment the counter
+    sono_counter += 1
+    # Generate today's date in YYYY-MM-DD format
+    sodate_format = datetime.now().strftime('%Y-%m-%d')
+    etree.SubElement(sales_order, "SODATE").text = sodate_format
+    etree.SubElement(sales_order, "TAX1ID").text = str('T')  # Default value 'T'
     etree.SubElement(sales_order, "TAX1CODE").text = str('T')  # Default value 'T'
     etree.SubElement(sales_order, "TAX2CODE").text = str(last_item_row['TAX2CODE'])
     etree.SubElement(sales_order, "TAX1RATE").text = str(11)  # Default value 11
@@ -67,7 +82,7 @@ for transaction_id, group in grouped:
     etree.SubElement(sales_order, "TERMSID").text = str('C.O.D')  # Default value C.O.D
     etree.SubElement(sales_order, "SHIPVIAID").text = str(last_item_row['SHIPVIAID'])
     etree.SubElement(sales_order, "FOB").text = str(last_item_row['FOB'])
-    etree.SubElement(sales_order, "ESTSHIPDATE").text = datetime.strftime(last_item_row['ESTSHIPDATE'], "%Y-%m-%d")
+    etree.SubElement(sales_order, "ESTSHIPDATE").text = sodate_format
     etree.SubElement(sales_order, "DESCRIPTION").text = str(last_item_row['DESCRIPTION'])
     etree.SubElement(sales_order, "SHIPTO1").text = str(last_item_row['SHIPTO1'])
     etree.SubElement(sales_order, "SHIPTO2").text = str(last_item_row['SHIPTO2'])
