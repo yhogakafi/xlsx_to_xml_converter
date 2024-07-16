@@ -42,6 +42,7 @@ def generate_xml_and_report():
         ponos = []
         sonos = []
         shipto1 = []
+        sodates = []
 
         # Create the Transactions element
         transactions = etree.SubElement(root, "TRANSACTIONS", OnError="CONTINUE")
@@ -127,6 +128,7 @@ def generate_xml_and_report():
             ponos.append(last_item_row['PONO'])
             sonos.append(sono_format)
             shipto1.append(last_item_row['SHIPTO1'])
+            sodates.append(sodate_format)
 
             # Create SALESMANID element and add LASTNAME and FIRSTNAME inside it
             salesman_id = etree.SubElement(sales_order, "SALESMANID")
@@ -150,7 +152,7 @@ def generate_xml_and_report():
                 f.write(xml_string)
 
             # Generate report in Excel
-            report_data = pd.DataFrame({"PONO": ponos, "SHIPTO1" : shipto1, "SONO": sonos})
+            report_data = pd.DataFrame({"No.PO": ponos, "Username" : shipto1, "No.Pesanan": sonos, "Tgl.Pesanan": sodates})
             report_filename = os.path.splitext(xml_filename)[0] + "_report.xlsx"
             report_data.to_excel(report_filename, index=False)
 
