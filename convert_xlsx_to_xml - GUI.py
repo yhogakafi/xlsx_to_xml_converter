@@ -20,7 +20,7 @@ def select_excel_file():
 # Function to handle button click event for generating XML and report
 def generate_xml_and_report():
     try:
-        # Get sono_counter value from the entry widget
+        # Get sono_counter value, project and customer id from the entry widget
         sono_counter = int(entry_sono.get())
         project_customer_id = entry_project_customer_id.get()
         
@@ -172,13 +172,21 @@ root.title("Generate XML and Report")
 # Set the initial window size
 root.geometry("500x300")  # Width x Height
 
-# Create a button to select Excel file source
-select_file_button = tk.Button(root, text="Pilih File Excel", command=select_excel_file)
-select_file_button.pack(pady=10)
+
+# Define a font for the GUI
+large_font = ("Helvetica", 14)
+
+# Title
+title_label = tk.Label(root, text="XLSX TO XML CONVERTER", font=large_font)
+title_label.pack(pady=10)
 
 # Label to show selected file path
 file_label = tk.Label(root, text="Tidak ada file excel dipilih")
 file_label.pack()
+
+# Create a button to select Excel file source
+select_file_button = tk.Button(root, text="Pilih File Excel", command=select_excel_file)
+select_file_button.pack(pady=10)
 
 # Create a label and entry for sono_counter
 label_sono = tk.Label(root, text="Input Nomor Pesanan (Contoh : 5000) :")
