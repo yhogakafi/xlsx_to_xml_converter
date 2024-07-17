@@ -180,7 +180,7 @@ title_label = tk.Label(root, text="XLSX TO XML CONVERTER", font=large_font)
 title_label.pack(pady=10)
 
 # Label to show selected file path
-file_label = tk.Label(root, text="Tidak ada file excel dipilih")
+file_label = tk.Label(root, text="Tidak ada file excel dipilih", font="11", fg="Red")
 file_label.pack()
 
 # Create a button to select Excel file source
