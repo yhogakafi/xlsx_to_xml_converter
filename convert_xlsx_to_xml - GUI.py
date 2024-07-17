@@ -20,9 +20,9 @@ def select_excel_file():
 # Function to handle button click event for generating XML and report
 def generate_xml_and_report():
     try:
-        # Get sono_counter value, project and customer id from the entry widget
+        # Get sono_counter value from the entry widget
         sono_counter = int(entry_sono.get())
-        project_customer_id = entry_project_customer_id.get()
+        project_customer_id = project_var.get()
         
         # Load the Excel file
         df = pd.read_excel(excel_file_path)
@@ -170,8 +170,7 @@ root = tk.Tk()
 root.title("Generate XML and Report")
 
 # Set the initial window size
-root.geometry("500x300")  # Width x Height
-
+root.geometry("500x350")  # Width x Height
 
 # Define a font for the GUI
 large_font = ("Helvetica", 14)
@@ -194,11 +193,17 @@ label_sono.pack(pady=10)
 entry_sono = tk.Entry(root)
 entry_sono.pack()
 
-# Create a label and entry for project_customer_id
-label_project_customer_id = tk.Label(root, text="Input Kode Marketplace (Contoh : TMO-1101) :")
+# Create a label for project_customer_id selection
+label_project_customer_id = tk.Label(root, text="Pilih Kode Marketplace:")
 label_project_customer_id.pack(pady=10)
-entry_project_customer_id = tk.Entry(root)
-entry_project_customer_id.pack()
+
+# Create radio buttons for project_customer_id selection
+project_var = tk.StringVar()
+radio_tmo_1101 = tk.Radiobutton(root, text="TMO-1101 (SHOPEE SCELTA)", variable=project_var, value="TMO-1101")
+radio_tmo_1102 = tk.Radiobutton(root, text="TMO-1102 (SHOPEE GRAPE)", variable=project_var, value="TMO-1102")
+radio_tmo_1101.pack()
+radio_tmo_1102.pack()
+radio_tmo_1101.select()  # Select the first option by default
 
 # Create a button to generate XML and report
 generate_button = tk.Button(root, text="Generate XML and Report", command=generate_xml_and_report, state=tk.DISABLED)
