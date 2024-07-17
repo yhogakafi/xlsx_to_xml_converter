@@ -200,13 +200,13 @@ label_project_customer_id.pack(pady=10)
 # Create radio buttons for project_customer_id selection
 project_var = tk.StringVar()
 radio_tmo_1101 = tk.Radiobutton(root, text="TMO-1101 (SHOPEE SCELTA)", variable=project_var, value="TMO-1101")
-radio_tmo_1102 = tk.Radiobutton(root, text="TMO-1009 (SHOPEE GRAPE)", variable=project_var, value="TMO-1009")
+radio_tmo_1009 = tk.Radiobutton(root, text="TMO-1009 (SHOPEE GRAPE)", variable=project_var, value="TMO-1009")
 radio_tmo_1101.pack()
-radio_tmo_1102.pack()
+radio_tmo_1009.pack()
 radio_tmo_1101.select()  # Select the first option by default
 
 # Create a button to generate XML and report
-generate_button = tk.Button(root, text="Generate XML and Report", command=generate_xml_and_report, state=tk.DISABLED, font=large_font)
+generate_button = tk.Button(root, text="Buat XML dan Laporan", command=generate_xml_and_report, state=tk.DISABLED, font=large_font)
 generate_button.pack(pady=10)
 
 # Run the main loop
