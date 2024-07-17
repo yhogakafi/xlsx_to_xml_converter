@@ -21,7 +21,8 @@ def select_excel_file():
 def generate_xml_and_report():
     try:
         # Get sono_counter value from the entry widget
-        sono_counter = int(entry.get())
+        sono_counter = int(entry_sono.get())
+        project_customer_id = entry_project_customer_id.get()
         
         # Load the Excel file
         df = pd.read_excel(excel_file_path)
@@ -78,9 +79,9 @@ def generate_xml_and_report():
                 etree.SubElement(item_line, "ITEMRESERVED10").text = str(item_row.ITEMRESERVED10)
                 etree.SubElement(item_line, "ITEMOVDESC").text = str(item_row.ITEMOVDESC)
                 etree.SubElement(item_line, "UNITPRICE").text = str(item_row.UNITPRICE)
-                etree.SubElement(item_line, "DISCPC").text = str(item_row.DISCPC)
+                etree.SubElement(item_line, "DISCPC").text = f"#{item_row.DISCPC}"
                 etree.SubElement(item_line, "TAXCODES").text = str('T')
-                etree.SubElement(item_line, "PROJECTID").text = str('TMO-1101')
+                etree.SubElement(item_line, "PROJECTID").text = project_customer_id
                 etree.SubElement(item_line, "DEPTID").text = str('ONLINE-TMS')
                 etree.SubElement(item_line, "QTYSHIPPED").text = str(item_row.QTYSHIPPED)
 
@@ -121,7 +122,7 @@ def generate_xml_and_report():
             etree.SubElement(sales_order, "DP").text = str(0)  # Default value 0
             etree.SubElement(sales_order, "DPACCOUNTID").text = str('TMS-210202')  # Default value TMS-210202
             etree.SubElement(sales_order, "DPUSED").text = str(last_item_row['DPUSED'])
-            etree.SubElement(sales_order, "CUSTOMERID").text = str('TMO-1101')  # Default value TMO-1101
+            etree.SubElement(sales_order, "CUSTOMERID").text = project_customer_id
             etree.SubElement(sales_order, "PONO").text = str(last_item_row['PONO'])
 
             # Append PONO and SONO to lists
@@ -140,8 +141,11 @@ def generate_xml_and_report():
         # Convert the XML tree to a string
         xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8')
 
+        # Extract the base name of the Excel file without extension
+        base_name = os.path.splitext(os.path.basename(excel_file_path))[0]
+
         # Default XML file name
-        default_xml_filename = f"PO_TANGGAL_{datetime.now().strftime('%d-%m-%Y')}_{entry.get()}.xml"
+        default_xml_filename = f"{base_name}_{datetime.now().strftime('%d-%m-%Y')}_{entry_sono.get()}.xml"
 
         # Ask user where to save the XML file
         xml_filename = filedialog.asksaveasfilename(initialfile=default_xml_filename, defaultextension=".xml",
@@ -166,7 +170,7 @@ root = tk.Tk()
 root.title("Generate XML and Report")
 
 # Set the initial window size
-root.geometry("500x200")  # Width x Height
+root.geometry("500x300")  # Width x Height
 
 # Create a button to select Excel file source
 select_file_button = tk.Button(root, text="Pilih File Excel", command=select_excel_file)
@@ -177,10 +181,16 @@ file_label = tk.Label(root, text="Tidak ada file excel dipilih")
 file_label.pack()
 
 # Create a label and entry for sono_counter
-label = tk.Label(root, text="Input Nomor Pesanan (Contoh : 5000) :")
-label.pack(pady=10)
-entry = tk.Entry(root)
-entry.pack()
+label_sono = tk.Label(root, text="Input Nomor Pesanan (Contoh : 5000) :")
+label_sono.pack(pady=10)
+entry_sono = tk.Entry(root)
+entry_sono.pack()
+
+# Create a label and entry for project_customer_id
+label_project_customer_id = tk.Label(root, text="Input Kode Marketplace (Contoh : TMO-1101) :")
+label_project_customer_id.pack(pady=10)
+entry_project_customer_id = tk.Entry(root)
+entry_project_customer_id.pack()
 
 # Create a button to generate XML and report
 generate_button = tk.Button(root, text="Generate XML and Report", command=generate_xml_and_report, state=tk.DISABLED)

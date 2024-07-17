@@ -1,5 +1,6 @@
 ('C:\\Users\\yhoga\\Desktop\\yhogakafi.github.io\\import pesanan '
- 'penjualan\\Auto keyid\\build\\convert_xlsx_to_xml - GUI\\PYZ-00.pyz',
+ 'penjualan\\xlsx_to_xml_converter\\build\\convert_xlsx_to_xml - '
+ 'GUI\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\yhoga\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python312\\site-packages\\PIL\\__init__.py',
    'PYMODULE'),
