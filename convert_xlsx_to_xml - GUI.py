@@ -88,7 +88,7 @@ def generate_xml_and_report():
             # Add the details after all ITEMLINEs for this SALESORDER
             last_item_row = group.iloc[-1]  # Get the last row in the group
 
-            # Adjusting SONO format with a counter
+            # Adjusting SONO format with a counter and use 5 digit format with leading zero
             sono_format = f"SCO-S{datetime.now().strftime('%y%m')}-{counter:05d}"
             etree.SubElement(sales_order, "SONO").text = sono_format
             # Increment the counter
